@@ -47,13 +47,25 @@ module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
   }
 }
 
+module publicIP 'br/public:avm/res/network/public-ip-address:0.9.0' = {
+  name: 'deploy-public-ip'
+  params: {
+    name: 'pip-bastion-${parLocation}'
+    location: parLocation
+    skuName: 'Standard'
+    availabilityZones: []
+  }
+}
+
 module bastionHost 'br/public:avm/res/network/bastion-host:0.7.0' = {
   name: 'deploy-bastion-Host'
   params: {
     name: 'bastion-${parLocation}'
     virtualNetworkResourceId: modVNet.outputs.resourceId
     location: parLocation
-    skuName: 'Developer'
+    skuName: 'Basic'
+    bastionSubnetPublicIpResourceId: publicIP.outputs.resourceId
+    availabilityZones: []    
   }
 }
 

@@ -28,23 +28,23 @@ module workspace 'br/public:avm/res/operational-insights/workspace:0.12.0' = {
   }
 }
 
-// module networkManager 'br/public:avm/res/network/network-manager:0.5.2' = {
-//   name: 'deploy-vnm-${resourcePrefix}'
-//   scope: resourceGroup(resourceGroupName)  
-//   params: {
-//     name: 'vnm-${resourcePrefix}'
-//     networkManagerScopes: {
-//       subscriptions: [
-//         subscriptionId
-//       ]
-//     }
-//     networkManagerScopeAccesses: [
-//       'SecurityAdmin'
-//       'Connectivity'
-//       'Routing'
-//     ]    
-//   }
-// }
+module networkManager 'br/public:avm/res/network/network-manager:0.5.2' = {
+  name: 'deploy-vnm-${resourcePrefix}'
+  scope: resourceGroup(resourceGroupName)  
+  params: {
+    name: 'vnm-${resourcePrefix}'
+    networkManagerScopes: {
+      subscriptions: [
+        subscriptionId
+      ]
+    }
+    networkManagerScopeAccesses: [
+      'SecurityAdmin'
+      'Connectivity'
+      'Routing'
+    ]    
+  }
+}
 
 module hub 'modules/hub.bicep' = {
   name: 'deploy-hub-${resourcePrefix}'
