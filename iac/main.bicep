@@ -2,7 +2,7 @@ targetScope = 'subscription'
 param location string = 'norwayeast'
 param subscriptionId string = subscription().id  // change this to your subscription ID if needed
 
-import { getResourcePrefix, spoke1AddressRange, hubAddressRange, adminUsername, adminPassword } from 'variables.bicep'
+import { getResourcePrefix, hubAddressRange, adminUsername, adminPassword } from 'variables.bicep'
 
 var resourcePrefix = getResourcePrefix(location)
 var resourceGroupName = 'rg-${resourcePrefix}'
@@ -58,14 +58,16 @@ module hub 'modules/hub.bicep' = {
   }
 }
 
-module spoke1 'modules/spoke.bicep' = {
-  name: 'deploy-spoke1-${resourcePrefix}'
+module spokes 'modules/spoke.bicep' = [for i in range(1, 3): {
+  name: 'deploy-spoke${i}-${resourcePrefix}'
   scope: resourceGroup(resourceGroupName)
   params: {
+    parIndex: i
     parLocation: location
-    parAddressRange: spoke1AddressRange
+    parAddressRange: '10.9.${i}.0/24'
     parWorkspaceResourceId: workspace.outputs.resourceId    
     adminUsername: adminUsername
     adminPassword: adminPassword
-  }
-}
+  }  
+}]
+

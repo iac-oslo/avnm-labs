@@ -1,16 +1,17 @@
 targetScope = 'resourceGroup'
 
 param parLocation string
+param parIndex int
 param parAddressRange string
 param parWorkspaceResourceId string
 param adminUsername string
 @secure()
 param adminPassword string
 
-var varVNetName = 'vnet-spoke-${parLocation}'
+var varVNetName = 'vnet-spoke${parIndex}-${parLocation}'
 
 module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
-  name: 'deploy-${varVNetName}'
+  name: 'deploy-${varVNetName}-${parIndex}'
   params: {
     addressPrefixes: [
       parAddressRange
@@ -39,7 +40,7 @@ module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
 }
 
 module modVirtualMachine 'br/public:avm/res/compute/virtual-machine:0.16.0' = {
-  name: 'deploy-spoke-vm-${parLocation}'
+  name: 'deploy-spoke${parIndex}-vm-${parLocation}'
   params: {
     adminUsername: adminUsername
     adminPassword: adminPassword
@@ -49,7 +50,7 @@ module modVirtualMachine 'br/public:avm/res/compute/virtual-machine:0.16.0' = {
       sku: '22_04-lts-gen2'
       version: 'latest'
     }
-    name: 'vm-spoke-${parLocation}'
+    name: 'vm-spoke${parIndex}-${parLocation}'
     nicConfigurations: [
       {
         ipConfigurations: [
