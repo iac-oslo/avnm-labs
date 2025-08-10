@@ -27,6 +27,6 @@ jobs:
         uses: bacongobbler/azure-blob-storage-upload@main
         with:
           connection_string: ${{ secrets.STORAGE_ACCOUNT_SECRET }}
-          container_name: $web/azure-network-manager
+          container_name: $web/avnm-labs
           source_dir: 'site'    
           overwrite: true          

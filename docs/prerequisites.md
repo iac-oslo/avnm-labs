@@ -58,8 +58,8 @@ az login
 # Get a list of available subscriptions
 az account list -o table
 
-# Set subscription by subscription id
-az account set --subscription  xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+# Set subscription by subscription name
+az account set --subscription subscription_name
 
 # Set subscription by name
 az account set --subscription subscription_name
@@ -78,19 +78,3 @@ winget install -e --id Git.Git
 ## Install Azure PowerShell module
 
 Make sure that the latest version of Azure PowerShell is installed. See [Install Azure PowerShell module](https://learn.microsoft.com/en-us/powershell/azure/install-azure-powershell) for detailed information.
-
-## Wireshark
-
-Download and install [Wireshark](https://www.wireshark.org/download.html) or use `winget` (Windows only)
-
-```powershell
-winget install -e --id WiresharkFoundation.Wireshark
-```
-
-## Azure Storage Explorer
-
-Download and install [Azure Storage Explorer](https://azure.microsoft.com/en-us/products/storage/storage-explorer) or use `winget` (Windows only)
-
-```powershell
-winget install --id=Microsoft.Azure.StorageExplorer  -e
-```

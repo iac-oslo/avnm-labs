@@ -1,17 +1,11 @@
-site_name: Working with Azure Network Watcher - Workshop
-site_description: Working with Azure Network Watcher - Workshop
+site_name: Working with Azure Virtual Network Manager - Workshop
+site_description: Working with Azure Virtual Network Manager - Workshop
 site_author: Infrastructure as Code Oslo
 
 nav:
   - Homepage: index.md
   - Prerequisites: prerequisites.md
   - Lab 01 - Provision lab resources: labs/lab-01/index.md
-  - Lab 02 - Enable Network Watcher: labs/lab-02/index.md
-  - Lab 03 - Use IP flow verify and NSG diagnostics to troubleshoot a VM network traffic filter problem: labs/lab-03/index.md
-  - Lab 04 - Log network traffic with Network Security Group flow logs: labs/lab-04/index.md
-  - Lab 05 - Network Packet Capture with Network Watcher and Wireshark: labs/lab-05/index.md
-  - Lab 06 - Connection monitor: labs/lab-06/index.md
-  - Lab 07 - Working with Traffic analytics: labs/lab-07/index.md
   - Lab 08 - Cleaning up resources: labs/lab-08/index.md
 theme:
   name: material
@@ -40,8 +34,8 @@ theme:
     - content.tabs.link
   icon:
     repo: fontawesome/brands/github
-  logo: assets/images/10066-icon-service-Network-Watcher.svg
-  favicon: assets/images/10066-icon-service-Network-Watcher.svg
+  logo: assets/images/02237-icon-service-Network-Managers.svg
+  favicon: assets/images/02237-icon-service-Network-Managers.svg
 
 markdown_extensions:
   - pymdownx.emoji:
@@ -81,7 +75,7 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/Infrastructure-AsCode/azure-network-watcher
+      link: https://github.com/iac-oslo/avnm-labs
   consent:
     title: Cookie consent
     description: >- 
@@ -93,4 +87,4 @@ extra:
 extra_css:
   - assets/stylesheets/extra.css
 
-repo_url: https://github.com/Infrastructure-AsCode/azure-network-watcher
+repo_url: https://github.com/iac-oslo/avnm-labs
