@@ -32,15 +32,15 @@ module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
     subnets: [
       {
         name: 'AzureFirewallSubnet'
-        addressPrefix: cidrSubnet(parAddressRange, 26, 0)
+        addressPrefixes: [cidrSubnet(parAddressRange, 26, 0)]
       }
       {
         name: 'AzureBastionSubnet'
-        addressPrefix: cidrSubnet(parAddressRange, 26, 1)
+        addressPrefixes: [cidrSubnet(parAddressRange, 26, 1)]
       }
       {
         name: 'subnet-workload'
-        addressPrefix: cidrSubnet(parAddressRange, 26, 2)
+        addressPrefixes: [cidrSubnet(parAddressRange, 26, 2)] 
       }
     ]
     enableTelemetry: false
