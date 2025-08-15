@@ -1,4 +1,4 @@
-# lab-07 - Managing Virtual Networks IP addresses using AVNM IPAM
+# lab-02 - Managing Virtual Networks IP addresses using AVNM IPAM
 
 Before we start working with IP Address Management, we need to create new Address Pool in our Virtual Network Manager. This Address Pool will be used to manage IP addresses of our virtual networks.
 
@@ -159,16 +159,16 @@ Refresh  `vnm-norwayeast-avnm-labs/iac-main | Allocations` page and now everythi
 ![Associate VNet form](../../assets/images/lab-07/associate-vnet-4.png)
 
 
-## Task #5 - Create new  `vnet-spoke4-norwayeast` VNet with IP range from `iac-main` pool using Bicep
+## Task #5 - Create new  `vnet-online-norwayeast` VNet with IP range from `iac-main` pool using Bicep
 
 Create new `task5.bicep` file with the following content:
 
 ```bicep
-param parIndex int
+param parIndex int = 1
 param parLocation string = 'norwayeast'
 param numberOfIpAddresses int = 30
 
-var varVNetName = 'vnet-spoke${parIndex}-${parLocation}'
+var varVNetName = 'vnet-online${parIndex}-${parLocation}'
 
 resource ipamPool  'Microsoft.Network/networkManagers/ipamPools@2024-07-01' existing = {
   name: 'vnm-${parLocation}-avnm-labs/iac-main'
@@ -208,8 +208,7 @@ Deploy it using `az cli`
 pwd
 
 # Deploy task5.bicep file
-az deployment group create -g rg-norwayeast-avnm-labs --template-file task5.bicep --parameters parIndex=4
-
+az deployment group create -g rg-norwayeast-avnm-labs --template-file task5.bicep
 ```
 
 Check `Allocations` page. You should see new `vnet-spoke4-norwayeast` VNet with `subnet-workload` associated with `iac-main` IP address pool.

@@ -42,6 +42,10 @@ module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
         name: 'subnet-workload'
         addressPrefixes: [cidrSubnet(parAddressRange, 26, 2)] 
       }
+      {
+        name: 'AzureFirewallManagementSubnet'
+        addressPrefixes: [cidrSubnet(parAddressRange, 26, 3)] 
+      }
     ]
     enableTelemetry: false
   }
@@ -105,5 +109,32 @@ module modVirtualMachine 'br/public:avm/res/compute/virtual-machine:0.16.0' = {
     availabilityZone: -1
     location: parLocation
     enableTelemetry: false
+  }
+}
+
+module firewallPolicy 'br/public:avm/res/network/firewall-policy:0.3.1' = {
+  name: 'firewallPolicyDeployment'
+  params: {
+    name: 'nfp-${parLocation}'
+    tier: 'Basic'
+    threatIntelMode: 'Off'
+  }
+}
+
+var nafName = 'naf-${parLocation}'
+module azureFirewall 'br/public:avm/res/network/azure-firewall:0.8.0' = {
+  name: 'deploy-azure-firewall-basic'
+  params: {
+    name: nafName
+    azureSkuTier: 'Basic'
+    location: parLocation
+    virtualNetworkResourceId: modVNet.outputs.resourceId
+    firewallPolicyId: firewallPolicy.outputs.resourceId
+    publicIPAddressObject: {
+      name: 'pip-${nafName}'
+      publicIPAllocationMethod: 'Static'
+      skuName: 'Standard'
+      skuTier: 'Regional'
+    }    
   }
 }
