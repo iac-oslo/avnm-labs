@@ -136,5 +136,18 @@ module azureFirewall 'br/public:avm/res/network/azure-firewall:0.8.0' = {
       skuName: 'Standard'
       skuTier: 'Regional'
     }    
+    diagnosticSettings: [
+      {
+        name: 'diagnostics'
+        workspaceResourceId: parWorkspaceResourceId
+        logAnalyticsDestinationType: 'Dedicated'
+        logCategoriesAndGroups: [
+          {
+            categoryGroup: 'allLogs'
+            enabled: true
+          }
+        ]
+      }
+    ]
   }
 }

@@ -14,7 +14,7 @@ az extension add -n virtual-network-manager
 Note! If you don't like using the Azure portal, you can also create the IP Address Pool using Azure CLI. If that's the case, go to `Task #1.1`.
 
 Navigate to the `vnm-norwayeast-avnm-labs` Virtual Network Manager and select the `IP address management->IP address pools` section. Click on `Create` to create a new Address Pool.
-![Create Address Pool](../../assets/images/lab-07/create-address-pool.png)
+![Create Address Pool](../../assets/images/lab-02/create-address-pool.png)
 
 Fill in the following information:
 | Field | Value |
@@ -25,7 +25,7 @@ Fill in the following information:
 | Description | Main Address Pool for IAC labs |
 | Parent pool | Keep empty |
 
-![Create Address Pool form](../../assets/images/lab-07/create-address-pool-1.png)
+![Create Address Pool form](../../assets/images/lab-02/create-address-pool-1.png)
 
 Click `Next` to go to `IP addresses` section.
 
@@ -37,15 +37,15 @@ At the `IP addresses` section, Fill in the following information:
 | Size | /16 |
 
 
-![Create Address Pool form](../../assets/images/lab-07/create-address-pool-2.png)
+![Create Address Pool form](../../assets/images/lab-02/create-address-pool-2.png)
 
 Click `Review + create` and then `Create` to create the Address Pool.
 
 After pool is created you will see it in the list of Address Pools.
-![Address Pool list](../../assets/images/lab-07/create-address-pool-3.png)
+![Address Pool list](../../assets/images/lab-02/create-address-pool-3.png)
 
 If you navigate to VNet overview page, you can now see that IP range is managed by the IPAM
-![VNet overview](../../assets/images/lab-07/vnet-overview.png)
+![VNet overview](../../assets/images/lab-02/vnet-overview.png)
 
 ## Task #1.1 - create new Address Pool using `az cli`
 
@@ -56,21 +56,21 @@ az network manager ipam-pool create -n "iac-main" --network-manager-name "vnm-no
 ```
 
 After pool is created you will find it in the list of Address Pools.
-![Address Pool list](../../assets/images/lab-07/create-address-pool-3.png)
+![Address Pool list](../../assets/images/lab-02/create-address-pool-3.png)
 
 
 ## Task #2 - Associate existing `vnet-hub-norwayeast` VNet with Address Pool using Portal
 
 To associate `vnet-hub-norwayeast` virtual network with the IP address pool, navigate to the `vnm-norwayeast-avnm-labs/iac-main-pool` address pool and select `Allocations` under `Settings` tab. Click on `Associate resources` to associate the virtual network with the address pool.
 
-![Associate VNet](../../assets/images/lab-07/associate-vnet.png)
+![Associate VNet](../../assets/images/lab-02/associate-vnet.png)
 
 From the list of Virtual Networks, select `vnet-hub-norwayeast` and click `Associate`.
-![Associate VNet form](../../assets/images/lab-07/associate-vnet-1.png)
+![Associate VNet form](../../assets/images/lab-02/associate-vnet-1.png)
 
 If everything is correct, you will see the `vnet-hub-norwayeast` virtual network, all its subnets, and `vm-hub-norwayeast-nic-01` NIC associated with `vm-hub-norwayeast` virtual machine in the list of associated resources.
 
-![Associate VNet form](../../assets/images/lab-07/associate-vnet-2.png)
+![Associate VNet form](../../assets/images/lab-02/associate-vnet-2.png)
 
 ## Task #3 - Associate `vnet-spoke1-norwayeast` VNet with Address Pool using Bicep
 
@@ -143,7 +143,7 @@ Original Address Range that was assigned to this VNet was `/24` (256 IP addresse
 
 If you check `vnm-norwayeast-avnm-labs/iac-main | Allocations` at the Portal, you should see that the `vnet-spoke2-norwayeast` virtual network is now associated with the `iac-main` IP address pool, but `subnet-workload` and `vm-spoke2-norwayeast-nic-01` NIC are not associated yet. To fix it, you need to associate subnet `subnet-workload` with IP address pool.
 
-![Associate VNet form](../../assets/images/lab-07/associate-vnet-3.png)
+![Associate VNet form](../../assets/images/lab-02/associate-vnet-3.png)
 
 ```powershell
 # Get iac-main IP pool resource Id
@@ -156,7 +156,7 @@ az network vnet subnet update -n subnet-workload --vnet-name vnet-spoke2-norwaye
 As with VNet, the original Address Range that was assigned to `subnet-workload` was `/24` (256 IP addresses), so we should use this value when specifying `number-of-ip-addresses` parameter.
 
 Refresh  `vnm-norwayeast-avnm-labs/iac-main | Allocations` page and now everything should be allocated.
-![Associate VNet form](../../assets/images/lab-07/associate-vnet-4.png)
+![Associate VNet form](../../assets/images/lab-02/associate-vnet-4.png)
 
 
 ## Task #5 - Create new  `vnet-online-norwayeast` VNet with IP range from `iac-main` pool using Bicep
@@ -213,14 +213,14 @@ az deployment group create -g rg-norwayeast-avnm-labs --template-file task5.bice
 
 Check `Allocations` page. You should see new `vnet-spoke4-norwayeast` VNet with `subnet-workload` associated with `iac-main` IP address pool.
 
-![Associate VNet form](../../assets/images/lab-07/associate-vnet-5.png)
+![Associate VNet form](../../assets/images/lab-02/associate-vnet-5.png)
 
 Note! We specified number of IP addresses we need 30 and IPAM set it to closed range fulfilling our requirements, which in our case is `/27` (32 IP addresses).
 
 ## Task #6 - Allocate static IP range using Bicep
 
-Sometimes you will need to allocate IP range which is not managed by Azure, or belongs to the services not supported by AVNM (for example Azure Virtual WAN). In that case, you can allocate `Static CIDR`. As always you can do it from the Portal, using `az cli` or Bicep.
-Let's say that our Azure VWAN hub uses `10.9.4.0/23` IP range and on-prem datacenter address range are `10.9.250.0/23`, `10.9.252.0/23` and `10.9.254.0/23` and we want to allocate both to IPAM.
+Sometimes you will need to allocate IP range which is either not managed by Azure, or belongs to the services not supported by AVNM (for example Azure Virtual WAN). In that case, you can allocate `Static CIDR`. 
+Let's say that our Azure VWAN hub uses `10.9.4.0/23` IP range and on-prem datacenter address ranges are `10.9.250.0/23`, `10.9.252.0/23` and `10.9.254.0/23` and we want to allocate them into IPAM.
 
 Create `task6.bicep` file with the following content:
 
@@ -264,4 +264,4 @@ az deployment group create -g rg-norwayeast-avnm-labs --template-file task6.bice
 
 Check `Allocations` page. You should see new `VWAN-hub` and `OnPrem` static IP ranges allocated.
 
-![Associate VNet form](../../assets/images/lab-07/associate-vnet-6.png)
+![Associate VNet form](../../assets/images/lab-02/associate-vnet-6.png)

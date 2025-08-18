@@ -1,6 +1,6 @@
 # lab-01 - provisioning of lab resources
 
-As always, we need to provision lab environment before we start working on the lab tasks. To make sure you have all resource providers required by lab resources, run the following commands.  
+As always, we need to provision lab environment before we start working on the labs. To make sure you have all resource providers required by lab resources, run the following commands.  
 
 ```powershell
 # Make sure that all Resource Providers are registered
@@ -9,7 +9,6 @@ az provider register --namespace Microsoft.Network
 az provider register --namespace Microsoft.OperationalInsights
 az provider register --namespace Microsoft.Storage
 az provider register --namespace Microsoft.Compute
-az provider register --namespace microsoft.devtestlab
 ```
 
 ## Task #1 - Provision lab environment
@@ -27,8 +26,7 @@ cd .\avnm-labs\iac
 ./deploy.ps1
 ```
 
-Estimated deployment time is 5-10 min. 
-
+Estimated deployment time is 8-10 min. 
 
 The following resources will be deployed in your subscription under the following resource groups:
 
