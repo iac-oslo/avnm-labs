@@ -75,17 +75,16 @@ Let's create new `vnet-spoke4-norwayeast` Virtual Network using `az cli`. We wil
 $ipamPoolId = (az network manager ipam-pool show -n iac-main --network-manager-name vnm-norwayeast-avnm-labs -g rg-norwayeast-avnm-labs --query id -o tsv)
 
 # Create new spoke VNet with IP range from iac-main IP pool
-az network vnet create -n vnet-spoke4-norwayeast --resource-group rg-norwayeast-avnm-labs --ipam-allocations [0].number-of-ip-addresses=100 [0].id=$ipamPoolId 
+az network vnet create -n vnet-spoke4-norwayeast --resource-group rg-norwayeast-avnm-labs --ipam-allocations [0].number-of-ip-addresses=10 [0].id=$ipamPoolId 
 ```
 
-Note! It may take some minutes for policy to take effect.
+Note! It may take some minutes for policy to take effect, sometimes a lot of minutes :) 
 
 Navigate to `vnm-norwayeast-avnm-labs/ng-spokes` Network Group in a few minutes and check `Group members` page. You should see new VNet added to the group by the Policy.
 
 ## Task #3 - create new static Network Group for online VNets using Bicep
 
 In this task we will create a new static Network Group called `ng-online` for all online Virtual Networks.
-
 
 Create new file `online-ng.bicep` with the following content:
 
@@ -126,6 +125,6 @@ pwd
 # Deploy task6.bicep file
 az deployment group create --resource-group rg-norwayeast-avnm-labs --template-file online-ng.bicep
 
-# Check member list of ng-online Network Group
+# Check members list of ng-online Network Group
 az network manager group static-member list --network-group ng-online --network-manager vnm-norwayeast-avnm-labs -g rg-norwayeast-avnm-labs --query [].name -o tsv
 ```
