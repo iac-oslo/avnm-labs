@@ -1,5 +1,5 @@
 targetScope = 'subscription'
-param location string = 'norwayeast'
+param location string
 param subscriptionId string = subscription().id  // change this to your subscription ID if needed
 
 import { getResourcePrefix, hubAddressRange, adminUsername, adminPassword } from 'variables.bicep'
@@ -61,7 +61,7 @@ module hub 'modules/hub.bicep' = {
   }
 }
 
-module spokes 'modules/spoke.bicep' = [for i in range(1, 3): {
+module spokes 'modules/spoke.bicep' = [for i in range(1, 2): {
   name: 'deploy-spoke${i}-${resourcePrefix}'
   scope: resourceGroup(resourceGroupName)
   params: {

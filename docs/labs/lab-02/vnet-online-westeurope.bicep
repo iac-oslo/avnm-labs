@@ -1,7 +1,8 @@
 param parIndex int = 1
-param parLocation string = 'norwayeast'
+param parLocation string = 'westeurope'
+param numberOfIpAddresses int = 30
 
-var varVNetName = 'vnet-spoke${parIndex}-${parLocation}'
+var varVNetName = 'vnet-online${parIndex}-${parLocation}'
 
 resource ipamPool  'Microsoft.Network/networkManagers/ipamPools@2024-07-01' existing = {
   name: 'vnm-${parLocation}-avnm-labs/iac-main'
@@ -13,7 +14,7 @@ module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
     addressPrefixes: [
       ipamPool.id
     ]
-    ipamPoolNumberOfIpAddresses: '256'
+    ipamPoolNumberOfIpAddresses: '${numberOfIpAddresses}'
     name: varVNetName
     location: parLocation
     subnets: [
@@ -24,7 +25,7 @@ module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
             pool: {
               id: ipamPool.id
             }
-            numberOfIpAddresses: '256'
+            numberOfIpAddresses: '${numberOfIpAddresses}'
           }
         ]
       }

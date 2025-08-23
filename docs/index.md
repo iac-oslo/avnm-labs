@@ -21,12 +21,11 @@ Workshop is organized as a combination of theoretical blocks with slides and han
 - Azure Virtual Network Manager overview (slides)
 - [Lab-01](labs/lab-01/index.md) - Provision lab resources
 - [Lab-02](labs/lab-02/index.md) - Managing Virtual Networks IP addresses using AVNM IPAM
-- Lab-03 - Segmenting virtual networks with Network Groups
-- Lab-04 - Implementing hub-and-spoke network topology with AVNM
-- Lab-05 - Implementing mesh network topology with AVNM
-- Lab-06 - Secure virtual networks using AVNM rule-set
-- Lab-07 - Routing spoke-to-spoke traffic via Azure Firewall
-- Lab-08 - Verifying connectivity between spokes
+- [Lab-03](labs/lab-03/index.md) - Segmenting virtual networks with Network Groups
+- [Lab-04](labs/lab-04/index.md) - Implementing hub-and-spoke network topology with AVNM
+- Lab-05 - Secure virtual networks using AVNM rule-set
+- Lab-06 - Routing spoke-to-spoke traffic via Azure Firewall
+- Lab-07 - Verifying connectivity between spokes
 - [Lab-09](labs/lab-09/index.md) - Cleaning up resources
 
 ## Prerequisites

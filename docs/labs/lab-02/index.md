@@ -13,7 +13,7 @@ az extension add -n virtual-network-manager
 
 Note! If you don't like using the Azure portal, you can also create the IP Address Pool using Azure CLI. If that's the case, go to `Task #1.1`.
 
-Navigate to the `vnm-norwayeast-avnm-labs` Virtual Network Manager and select the `IP address management->IP address pools` section. Click on `Create` to create a new Address Pool.
+Navigate to the `vnm-westeurope-avnm-labs` Virtual Network Manager and select the `IP address management->IP address pools` section. Click on `Create` to create a new Address Pool.
 ![Create Address Pool](../../assets/images/lab-02/create-address-pool.png)
 
 Fill in the following information:
@@ -52,35 +52,35 @@ If you navigate to VNet overview page, you can now see that IP range is managed 
 Use the following command to create a new Address Pool using `az cli`
 
 ```powershell
-az network manager ipam-pool create -n "iac-main" --network-manager-name "vnm-norwayeast-avnm-labs" --resource-group "rg-norwayeast-avnm-labs" --address-prefixes "['10.9.0.0/16']" --display-name "IaC Main Pool" --description "Main Address Pool for IAC labs"
+az network manager ipam-pool create -n "iac-main" --network-manager-name "vnm-westeurope-avnm-labs" --resource-group "rg-westeurope-avnm-labs" --address-prefixes "['10.9.0.0/16']" --display-name "IaC Main Pool" --description "Main Address Pool for IAC labs"
 ```
 
 After pool is created you will find it in the list of Address Pools.
 ![Address Pool list](../../assets/images/lab-02/create-address-pool-3.png)
 
 
-## Task #2 - Associate existing `vnet-hub-norwayeast` VNet with Address Pool using Portal
+## Task #2 - Associate existing `vnet-hub-westeurope` VNet with Address Pool using Portal
 
-To associate `vnet-hub-norwayeast` virtual network with the IP address pool, navigate to the `vnm-norwayeast-avnm-labs/iac-main-pool` address pool and select `Allocations` under `Settings` tab. Click on `Associate resources` to associate the virtual network with the address pool.
+To associate `vnet-hub-westeurope` virtual network with the IP address pool, navigate to the `vnm-westeurope-avnm-labs/iac-main-pool` address pool and select `Allocations` under `Settings` tab. Click on `Associate resources` to associate the virtual network with the address pool.
 
 ![Associate VNet](../../assets/images/lab-02/associate-vnet.png)
 
-From the list of Virtual Networks, select `vnet-hub-norwayeast` and click `Associate`.
+From the list of Virtual Networks, select `vnet-hub-westeurope` and click `Associate`.
 ![Associate VNet form](../../assets/images/lab-02/associate-vnet-1.png)
 
-If everything is correct, you will see the `vnet-hub-norwayeast` virtual network, all its subnets, and `vm-hub-norwayeast-nic-01` NIC associated with `vm-hub-norwayeast` virtual machine in the list of associated resources.
+If everything is correct, you will see the `vnet-hub-westeurope` virtual network, all its subnets, and `vm-hub-westeurope-nic-01` NIC associated with `vm-hub-westeurope` virtual machine in the list of associated resources.
 
 ![Associate VNet form](../../assets/images/lab-02/associate-vnet-2.png)
 
-## Task #3 - Associate `vnet-spoke1-norwayeast` VNet with Address Pool using Bicep
+## Task #3 - Associate `vnet-spoke1-westeurope` VNet with Address Pool using Bicep
 
-You can associate existing virtual network to the IP address pool if VNet address range is withing pool address range. In our case, IP address pool uses `10.9.0.0/16` range and `vnet-spoke1-norwayeast` uses `10.9.1.0/24` range, so if should work.
+You can associate existing virtual network to the IP address pool if VNet address range is withing pool address range. In our case, IP address pool uses `10.9.0.0/16` range and `vnet-spoke1-westeurope` uses `10.9.1.0/24` range, so if should work.
 
 To associate existing virtual network with the IP address pool using Bicep template, create `task3.bicep` file with the following content:
 
 ```bicep
 param parIndex int = 1
-param parLocation string = 'norwayeast'
+param parLocation string = 'westeurope'
 
 var varVNetName = 'vnet-spoke${parIndex}-${parLocation}'
 
@@ -125,47 +125,47 @@ Deploy template.
 pwd
 
 # Deploy task3.bicep file
-az deployment group create -g rg-norwayeast-avnm-labs --template-file task3.bicep --parameters parIndex=1
+az deployment group create -g rg-westeurope-avnm-labs --template-file task3.bicep --parameters parIndex=1
 ```
 
-## Task #4 - Associate `vnet-spoke2-norwayeast` VNet with Address Pool using `az cli`
+## Task #4 - Associate `vnet-spoke2-westeurope` VNet with Address Pool using `az cli`
 
-To associate existing `vnet-spoke2-norwayeast` virtual network with the address pool using `az cli`, use the following command:
+To associate existing `vnet-spoke2-westeurope` virtual network with the address pool using `az cli`, use the following command:
 
 ```powershell
 # Get iac-main IP pool resource Id
-$ipamPoolId = (az network manager ipam-pool show -n iac-main --network-manager-name vnm-norwayeast-avnm-labs -g rg-norwayeast-avnm-labs --query id -o tsv)
-# Associate vnet-spoke2-norwayeast with iac-main IP pool
-az network vnet update --name vnet-spoke2-norwayeast -g rg-norwayeast-avnm-labs --ipam-allocations [0].number-of-ip-addresses=256 [0].id=$ipamPoolId
+$ipamPoolId = (az network manager ipam-pool show -n iac-main --network-manager-name vnm-westeurope-avnm-labs -g rg-westeurope-avnm-labs --query id -o tsv)
+# Associate vnet-spoke2-westeurope with iac-main IP pool
+az network vnet update --name vnet-spoke2-westeurope -g rg-westeurope-avnm-labs --ipam-allocations [0].number-of-ip-addresses=256 [0].id=$ipamPoolId
 ```
 
 Original Address Range that was assigned to this VNet was `/24` (256 IP addresses), so we should use this value when specifying `number-of-ip-addresses` parameter.
 
-If you check `vnm-norwayeast-avnm-labs/iac-main | Allocations` at the Portal, you should see that the `vnet-spoke2-norwayeast` virtual network is now associated with the `iac-main` IP address pool, but `subnet-workload` and `vm-spoke2-norwayeast-nic-01` NIC are not associated yet. To fix it, you need to associate subnet `subnet-workload` with IP address pool.
+If you check `vnm-westeurope-avnm-labs/iac-main | Allocations` at the Portal, you should see that the `vnet-spoke2-westeurope` virtual network is now associated with the `iac-main` IP address pool, but `subnet-workload` and `vm-spoke2-westeurope-nic-01` NIC are not associated yet. To fix it, you need to associate subnet `subnet-workload` with IP address pool.
 
 ![Associate VNet form](../../assets/images/lab-02/associate-vnet-3.png)
 
 ```powershell
 # Get iac-main IP pool resource Id
-$ipamPoolId = (az network manager ipam-pool show -n iac-main --network-manager-name vnm-norwayeast-avnm-labs -g rg-norwayeast-avnm-labs --query id -o tsv)
+$ipamPoolId = (az network manager ipam-pool show -n iac-main --network-manager-name vnm-westeurope-avnm-labs -g rg-westeurope-avnm-labs --query id -o tsv)
 
 # Associate subnet-workload with iac-main IP pool
-az network vnet subnet update -n subnet-workload --vnet-name vnet-spoke2-norwayeast -g rg-norwayeast-avnm-labs --ipam-allocations [0].number-of-ip-addresses=256 [0].id=$ipamPoolId
+az network vnet subnet update -n subnet-workload --vnet-name vnet-spoke2-westeurope -g rg-westeurope-avnm-labs --ipam-allocations [0].number-of-ip-addresses=256 [0].id=$ipamPoolId
 ```
 
 As with VNet, the original Address Range that was assigned to `subnet-workload` was `/24` (256 IP addresses), so we should use this value when specifying `number-of-ip-addresses` parameter.
 
-Refresh  `vnm-norwayeast-avnm-labs/iac-main | Allocations` page and now everything should be allocated.
+Refresh  `vnm-westeurope-avnm-labs/iac-main | Allocations` page and now everything should be allocated.
 ![Associate VNet form](../../assets/images/lab-02/associate-vnet-4.png)
 
 
-## Task #5 - Create new  `vnet-online-norwayeast` VNet with IP range from `iac-main` pool using Bicep
+## Task #5 - Create new  `vnet-online-westeurope` VNet with IP range from `iac-main` pool using Bicep
 
-Create new `task5.bicep` file with the following content:
+Create new `vnet-online-westeurope.bicep` file with the following content:
 
 ```bicep
 param parIndex int = 1
-param parLocation string = 'norwayeast'
+param parLocation string = 'westeurope'
 param numberOfIpAddresses int = 30
 
 var varVNetName = 'vnet-online${parIndex}-${parLocation}'
@@ -204,14 +204,14 @@ module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
 Deploy it using `az cli`
 
 ```powershell
-# Make sure that you are at the folder where task5.bicep file is located
+# Make sure that you are at the folder where vnet-online-westeurope.bicep file is located
 pwd
 
-# Deploy task5.bicep file
-az deployment group create -g rg-norwayeast-avnm-labs --template-file task5.bicep
+# Deploy vnet-online-westeurope.bicep file
+az deployment group create -g rg-westeurope-avnm-labs --template-file vnet-online-westeurope.bicep
 ```
 
-Check `Allocations` page. You should see new `vnet-spoke4-norwayeast` VNet with `subnet-workload` associated with `iac-main` IP address pool.
+Check `Allocations` page. You should see new `vnet-spoke4-westeurope` VNet with `subnet-workload` associated with `iac-main` IP address pool.
 
 ![Associate VNet form](../../assets/images/lab-02/associate-vnet-5.png)
 
@@ -226,7 +226,7 @@ Create `task6.bicep` file with the following content:
 
 ```bicep
 resource ipamPool'Microsoft.Network/networkManagers/ipamPools@2024-07-01' existing = {
-  name: 'vnm-norwayeast-avnm-labs/iac-main'
+  name: 'vnm-westeurope-avnm-labs/iac-main'
 }
 
 resource vwanAlocation 'Microsoft.Network/networkManagers/ipamPools/staticCidrs@2024-07-01' = {
@@ -259,7 +259,7 @@ Deploy it
 pwd
 
 # Deploy task6.bicep file
-az deployment group create -g rg-norwayeast-avnm-labs --template-file task6.bicep
+az deployment group create -g rg-westeurope-avnm-labs --template-file task6.bicep
 ```
 
 Check `Allocations` page. You should see new `VWAN-hub` and `OnPrem` static IP ranges allocated.

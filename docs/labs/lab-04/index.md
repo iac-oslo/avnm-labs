@@ -9,7 +9,7 @@ A network group is global container that includes a set of virtual network resou
 
 To get a better understanding of what is Connectivity Configuration, let's create one using Azure portal.
 
-Navigate to `vnm-norwayeast-avnm-labs | Settings | Configurations` and click `Create Connectivity Configuration` (or select `+ Create | Connectivity Configuration`).
+Navigate to `vnm-westeurope-avnm-labs | Settings | Configurations` and click `Create Connectivity Configuration` (or select `+ Create | Connectivity Configuration`).
 
 ![Create Connectivity Configuration](../../assets/images/lab-04/connectivity-configuration-1.png)
 
@@ -29,7 +29,7 @@ Click `Next Topology` and fill in the following information at the `Topology` pa
 
 ![Create Connectivity Configuration](../../assets/images/lab-04/connectivity-configuration-1.1.png)
 
-Click `Select a hub` and choose `vnet-hub-norwayeast` Virtual Network.
+Click `Select a hub` and choose `vnet-hub-westeurope` Virtual Network.
 
 ![Create Connectivity Configuration](../../assets/images/lab-04/connectivity-configuration-2.png)
 
@@ -48,7 +48,7 @@ Click `Review and Create` and `Create`.
 
 Configuration that we created will not take effect until it is deployed. To deploy the configuration, follow these steps:
 
-Navigate to `vnm-norwayeast-avnm-labs | Settings | Configurations`, select the `hub-spoke-config` Connectivity Configuration, `Norway East` as a `Target regions` and then click `Next`.
+Navigate to `vnm-westeurope-avnm-labs | Settings | Configurations`, select the `hub-spoke-config` Connectivity Configuration, `Norway East` as a `Target regions` and then click `Next`.
 
 ![Deploy Connectivity Configuration](../../assets/images/lab-04/deploy-connectivity-configuration-1.png)
 
@@ -56,54 +56,56 @@ Review changes that will be deployed and click `Deploy`.
 
 ![Deploy Connectivity Configuration](../../assets/images/lab-04/deploy-connectivity-configuration-2.png)
 
-You can always find all deployments under `vnm-norwayeast-avnm-labs | Settings | Deployments`.
+You can always find all deployments under `vnm-westeurope-avnm-labs | Settings | Deployments`.
 
 ![Deploy Connectivity Configuration](../../assets/images/lab-04/deploy-connectivity-configuration-3.png)
 
 
 After deployment is complete, there should be peering created between the hub and spoke virtual networks.
 
-If you check `vnet-spoke1-norwayeast`, you should see a peering connection to `vnet-hub-norwayeast`.
+If you check `vnet-spoke1-westeurope`, you should see a peering connection to `vnet-hub-westeurope`.
 
 ![VNet Peering](../../assets/images/lab-04/peering-1.png)
 
-Also if you check `Effective routes` for `vm-spoke1-norwayeast-nic-01`, you should see the following new route to `vnet-hub-norwayeast`.
+Also if you check `Effective routes` for `vm-spoke1-westeurope-nic-01`, you should see the following new route to `vnet-hub-westeurope`.
 
 ![Effective Routes](../../assets/images/lab-04/direct-communication-0.png)
 
 
 ## Task #5 - Test connectivity between VMs
 
-Connect to `vm-spoke1-norwayeast` using Bastion. 
+Connect to `vm-spoke1-westeurope` using `az cli` Bastion and ssh extensions. Use `iac-admin` `fooBar123!` username and password to login. From the terminal try to ping VMs from hub and spoke2. Note that IP assined to your VMs might be different, so check them before you run the commands.
 
-![Verify connectivity](../../assets/images/lab-04/connectivity-1.png)
 
-Use `iac-admin` `fooBar123!` username and password to login.
+```bash
+# Get vm-spoke1-westeurope resource id
+$vmId = (az vm show --name vm-spoke1-westeurope --resource-group rg-westeurope-avnm-labs --query id --output tsv)
 
-![Verify connectivity](../../assets/images/lab-04/connectivity-2.png)
+az network bastion ssh --name bastion-westeurope --resource-group rg-westeurope-avnm-labs --target-resource-id $vmId --auth-type password --username iac-admin
+```
 
-From the terminal try to ping VMs from hub and spoke2. Note that IP assined to your VMs might be different, so check them before you run the commands.
+From the terminal try to ping VMs from hub and spoke2. Note that IP assined to your VMs might be different, so, check them before you run the commands.
 
 ```bash
 # ping VM at hub VNet (you may have different IP for your VM)
-iac-admin@vm-spoke1-norwayeast:~$ ping 10.9.0.132
+iac-admin@vm-spoke1-westeurope:~$ ping 10.9.0.132
 PING 10.9.0.132 (10.9.0.132) 56(84) bytes of data.
 64 bytes from 10.9.0.132: icmp_seq=1 ttl=64 time=3.05 ms
 64 bytes from 10.9.0.132: icmp_seq=2 ttl=64 time=1.69 ms
 64 bytes from 10.9.0.132: icmp_seq=3 ttl=64 time=1.31 ms
 ```
 
-You should get a response from the VM. Now, try to ping `vm-spoke2-norwayeast` from `spoke2` VNet.
+You should get a response from the VM. Now, try to ping `vm-spoke2-westeurope` from `spoke2` VNet.
 
 ```bash
-# ping VM at vnet-spoke2-norwayeast VNet (you may have different IP for your VM)
-iac-admin@vm-spoke1-norwayeast:~$ ping 10.9.2.4
+# ping VM at vnet-spoke2-westeurope VNet (you may have different IP for your VM)
+iac-admin@vm-spoke1-westeurope:~$ ping 10.9.2.4
 PING 10.9.2.4 (10.9.2.4) 56(84) bytes of data.
 ```
 
 You will not get any response, because there are no connectivity between spokes. Let's enable direct connectivity between spokes using Virtual Network Manager `Direct connectivity` feature.
 
-## Task #4 - Enable direct connectivity between VNets within Network Group 
+## Task #6 - Enable direct connectivity between VNets within Network Group 
 
 Open `hub-spoke-config` Connectivity Configuration and navigate to `Settings -> Network groups`. Select `ng-spokes` Network Group, click `... -> Enable direct connectivity`.
 
@@ -117,7 +119,7 @@ Select `hub-spoke-config` configuration, `Norway East` as a deployment region an
 
 ![Enable direct connectivity](../../assets/images/lab-04/deploy-2.png)
 
-When deployment complete, check `Effective routes` for `vm-spoke1-norwayeast-nic-01`.
+When deployment complete, check `Effective routes` for `vm-spoke1-westeurope-nic-01`.
 
 Note, it might take some minutes for changes to be applied. So if you don't see new routes, wait a couple of minutes and try again.  
 
@@ -125,10 +127,10 @@ Note, it might take some minutes for changes to be applied. So if you don't see 
 
 You should now see new routes towards spoke VNets with `ConnectedGroup` as a `Next Hop Type`.
 
-If you now go back to the `vm-spoke1-norwayeast` terminal and try to ping `vm-spoke2-norwayeast`, you should get a response.
+If you now go back to the `vm-spoke1-westeurope` terminal and try to ping `vm-spoke2-westeurope`, you should get a response.
 
 ```bash
-iac-admin@vm-spoke1-norwayeast:~$ ping 10.9.2.4
+iac-admin@vm-spoke1-westeurope:~$ ping 10.9.2.4
 PING 10.9.2.4 (10.9.2.4) 56(84) bytes of data.
 64 bytes from 10.9.2.4: icmp_seq=1 ttl=64 time=2.67 ms
 64 bytes from 10.9.2.4: icmp_seq=2 ttl=64 time=1.06 ms

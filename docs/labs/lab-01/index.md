@@ -30,7 +30,7 @@ Estimated deployment time is 8-10 min.
 
 The following resources will be deployed in your subscription under the following resource groups:
 
-### rg-norwayeast-avnm-labs
+### rg-westeurope-avnm-labs
 | Resource name | Type | Location |
 |---------------|------|----------|
 | x | x | x |

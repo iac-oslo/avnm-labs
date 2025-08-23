@@ -65,6 +65,19 @@ az account set --subscription subscription_name
 az account set --subscription subscription_name
 ```
 
+## Install requires `az cli` extensions
+
+```powershell
+# Install virtual-network-manager extension
+az extension add -n virtual-network-manager
+
+# install bastion extension
+az extension add -n bastion
+
+# install ssh extension
+az extension add -n ssh
+```
+
 ## Install git
 
 ```powershell

@@ -7,5 +7,12 @@ This is the most important part of the workshop. We need to clean up all resourc
 Remove all resources that were created during the workshop by running the following commands:
 
 ```powershell
-az group delete --name rg-norwayeast-avnm-labs --yes --no-wait
+az group delete --name rg-westeurope-avnm-labs --yes --no-wait
+
+# remove policy assignment
+az policy assignment delete --name <policy-assignment-name> --scope <scope>
+
+# remove policy definition
+az policy definition delete --name <policy-definition-name>
 ```
+
