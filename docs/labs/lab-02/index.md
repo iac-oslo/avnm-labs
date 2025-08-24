@@ -9,45 +9,9 @@ Some of the tasks require `virtual-network-manager` extension, so make sure that
 az extension add -n virtual-network-manager
 ```
 
-## Task #1 - create new Address Pool at Azure portal 
+## Task #1 - create new Address Pool using `az cli`
 
-Note! If you don't like using the Azure portal, you can also create the IP Address Pool using Azure CLI. If that's the case, go to `Task #1.1`.
-
-Navigate to the `vnm-westeurope-avnm-labs` Virtual Network Manager and select the `IP address management->IP address pools` section. Click on `Create` to create a new Address Pool.
-![Create Address Pool](../../assets/images/lab-02/create-address-pool.png)
-
-Fill in the following information:
-| Field | Value |
-|-------|-------|
-| Name  | iac-main-pool |
-| Display name | IAC Main Pool |
-| Region | Norway East |
-| Description | Main Address Pool for IAC labs |
-| Parent pool | Keep empty |
-
-![Create Address Pool form](../../assets/images/lab-02/create-address-pool-1.png)
-
-Click `Next` to go to `IP addresses` section.
-
-At the `IP addresses` section, Fill in the following information:
-| Field | Value |
-|-------|-------|
-| IP address type | IPv4 |
-| Starting address | 10.9.0.0 |
-| Size | /16 |
-
-
-![Create Address Pool form](../../assets/images/lab-02/create-address-pool-2.png)
-
-Click `Review + create` and then `Create` to create the Address Pool.
-
-After pool is created you will see it in the list of Address Pools.
-![Address Pool list](../../assets/images/lab-02/create-address-pool-3.png)
-
-If you navigate to VNet overview page, you can now see that IP range is managed by the IPAM
-![VNet overview](../../assets/images/lab-02/vnet-overview.png)
-
-## Task #1.1 - create new Address Pool using `az cli`
+Let's create new IP Address pool `iac-main` with address range `10.9.0.0/16`. 
 
 Use the following command to create a new Address Pool using `az cli`
 
@@ -58,10 +22,9 @@ az network manager ipam-pool create -n "iac-main" --network-manager-name "vnm-we
 After pool is created you will find it in the list of Address Pools.
 ![Address Pool list](../../assets/images/lab-02/create-address-pool-3.png)
 
-
 ## Task #2 - Associate existing `vnet-hub-westeurope` VNet with Address Pool using Portal
 
-To associate `vnet-hub-westeurope` virtual network with the IP address pool, navigate to the `vnm-westeurope-avnm-labs/iac-main-pool` address pool and select `Allocations` under `Settings` tab. Click on `Associate resources` to associate the virtual network with the address pool.
+To associate `vnet-hub-westeurope` virtual network with the IP address pool, navigate to the `vnm-westeurope-avnm-labs/iac-main` address pool and select `Allocations` under `Settings` tab. Click on `Associate resources` to associate the virtual network with the address pool.
 
 ![Associate VNet](../../assets/images/lab-02/associate-vnet.png)
 
@@ -72,11 +35,15 @@ If everything is correct, you will see the `vnet-hub-westeurope` virtual network
 
 ![Associate VNet form](../../assets/images/lab-02/associate-vnet-2.png)
 
+If you navigate to VNet overview page, you can now see that IP range is managed by the IPAM
+![VNet overview](../../assets/images/lab-02/vnet-overview.png)
+
+
 ## Task #3 - Associate `vnet-spoke1-westeurope` VNet with Address Pool using Bicep
 
 You can associate existing virtual network to the IP address pool if VNet address range is withing pool address range. In our case, IP address pool uses `10.9.0.0/16` range and `vnet-spoke1-westeurope` uses `10.9.1.0/24` range, so if should work.
 
-To associate existing virtual network with the IP address pool using Bicep template, create `task3.bicep` file with the following content:
+To associate existing virtual network with the IP address pool using Bicep template, create `vnet-spoke1-westeurope.bicep` file with the following content:
 
 ```bicep
 param parIndex int = 1
@@ -121,11 +88,11 @@ Original Address Range that was assigned to this VNet was `/24` (256 IP addresse
 Deploy template.
 
 ```powershell
-# Make sure that you are at the folder where task3.bicep file is located
+# Make sure that you are at the folder where vnet-spoke1-westeurope.bicep file is located
 pwd
 
-# Deploy task3.bicep file
-az deployment group create -g rg-westeurope-avnm-labs --template-file task3.bicep --parameters parIndex=1
+# Deploy vnet-spoke1-westeurope.bicep file
+az deployment group create -g rg-westeurope-avnm-labs --template-file vnet-spoke1-westeurope.bicep
 ```
 
 ## Task #4 - Associate `vnet-spoke2-westeurope` VNet with Address Pool using `az cli`
@@ -211,25 +178,23 @@ pwd
 az deployment group create -g rg-westeurope-avnm-labs --template-file vnet-online-westeurope.bicep
 ```
 
-Check `Allocations` page. You should see new `vnet-spoke4-westeurope` VNet with `subnet-workload` associated with `iac-main` IP address pool.
+Check `Allocations` page. You should see new `vnet-online1-westeurope` VNet with `subnet-workload` associated with `iac-main` IP address pool.
 
-![Associate VNet form](../../assets/images/lab-02/associate-vnet-5.png)
-
-Note! We specified number of IP addresses we need 30 and IPAM set it to closed range fulfilling our requirements, which in our case is `/27` (32 IP addresses).
+Note! In the bicep file, we specified number of IP addresses we need `30`, and IPAM set it to the closed range fulfilling that requirements, which is `/27` (32 IP addresses).
 
 ## Task #6 - Allocate static IP range using Bicep
 
 Sometimes you will need to allocate IP range which is either not managed by Azure, or belongs to the services not supported by AVNM (for example Azure Virtual WAN). In that case, you can allocate `Static CIDR`. 
 Let's say that our Azure VWAN hub uses `10.9.4.0/23` IP range and on-prem datacenter address ranges are `10.9.250.0/23`, `10.9.252.0/23` and `10.9.254.0/23` and we want to allocate them into IPAM.
 
-Create `task6.bicep` file with the following content:
+Create `static-ranges.bicep` file with the following content:
 
 ```bicep
 resource ipamPool'Microsoft.Network/networkManagers/ipamPools@2024-07-01' existing = {
   name: 'vnm-westeurope-avnm-labs/iac-main'
 }
 
-resource vwanAlocation 'Microsoft.Network/networkManagers/ipamPools/staticCidrs@2024-07-01' = {
+resource vwanAllocation 'Microsoft.Network/networkManagers/ipamPools/staticCidrs@2024-07-01' = {
   name: 'VWAN-hub'
   parent: ipamPool
   properties: {
@@ -242,6 +207,9 @@ resource vwanAlocation 'Microsoft.Network/networkManagers/ipamPools/staticCidrs@
 resource onpremAllocation 'Microsoft.Network/networkManagers/ipamPools/staticCidrs@2024-07-01' = {
   name: 'OnPrem'
   parent: ipamPool
+  dependsOn: [
+    vwanAllocation
+  ]
   properties: {
     addressPrefixes: [
       '10.9.250.0/23'
@@ -258,8 +226,8 @@ Deploy it
 # Make sure that you are at the folder where task6.bicep file is located
 pwd
 
-# Deploy task6.bicep file
-az deployment group create -g rg-westeurope-avnm-labs --template-file task6.bicep
+# Deploy static-ranges.bicep file
+az deployment group create -g rg-westeurope-avnm-labs --template-file static-ranges.bicep
 ```
 
 Check `Allocations` page. You should see new `VWAN-hub` and `OnPrem` static IP ranges allocated.

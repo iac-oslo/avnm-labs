@@ -26,7 +26,7 @@ Fill in the following information:
 
 ![Create Network Group](../../assets/images/lab-03/network-group-2.png)
 
-Click `Create` and wait for the deployment to complete. When complete, open `ng-spokes-westeurope` group and navigate to `Group members` page and click `Create Azure Policy`.
+Click `Create` and wait for the deployment to complete. When complete, open `ng-spokes-westeurope` group and navigate to `Settings -> Group members` page and click `Create Azure Policy`.
 
 ![Create Network Group](../../assets/images/lab-03/network-group-3.png)
 
@@ -34,7 +34,7 @@ Fill in the following information:
 
 | Field | Value |
 |-------|-------|
-| Policy Name  | ng-spokes-westeurope |
+| Policy Name  | spokes-westeurope |
 | Scope  | Select scope (Subscription(s), Management Group or Resource group) at which policy rules will be evaluated against |
 
 At the `Criteria` section fill in policy rule criteria
@@ -61,7 +61,7 @@ and Policy assignments were created successfully.
 
 ![Create Network Group](../../assets/images/lab-03/network-group-7.png)
 
-Now, go back to `vnm-westeurope-avnm-labs/ng-spokes-westeurope` Network group nd check ``Group members` page. You should see that the group is populated with existing spoke VNets.
+Now, go back to `vnm-westeurope-avnm-labs/ng-spokes-westeurope` Network group and check `Settings -> Group members` page. You should see that the group is populated with existing spoke VNets.
 
 ![Create Network Group](../../assets/images/lab-03/network-group-8.png)
 
@@ -80,7 +80,9 @@ az network vnet create -n vnet-spoke3-westeurope --resource-group rg-westeurope-
 
 Note! It may take some minutes for policy to take effect, sometimes a lot of minutes :) 
 
-Navigate to `vnm-westeurope-avnm-labs/ng-spokes-westeurope` Network Group in a few minutes and check `Group members` page. You should see new VNet added to the group by the Policy.
+Navigate to `vnm-westeurope-avnm-labs/ng-spokes-westeurope` Network Group in a few minutes and check `Group members` page. You should see new VNet added to the group by the Policy. 
+
+If you don't see new VNet in the list, move on to the next task and get back when you done with all tasks from lab3.
 
 ## Task #3 - create new Network Group for hub VNet using `az cli`
 

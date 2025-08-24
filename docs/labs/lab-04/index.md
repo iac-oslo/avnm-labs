@@ -33,7 +33,7 @@ Click `Select a hub` and choose `vnet-hub-westeurope` Virtual Network.
 
 ![Create Connectivity Configuration](../../assets/images/lab-04/connectivity-configuration-2.png)
 
-At the `Spoke network groups` section, click `+ Add`, select `Add Network Groups` and choose `ng-spokes` Network Group.
+At the `Spoke network groups` section, click `+ Add`, select `Add Network Groups` and choose `ng-spokes-westeurope` Network Group.
 
 ![Create Connectivity Configuration](../../assets/images/lab-04/connectivity-configuration-3.png)
 
@@ -48,7 +48,11 @@ Click `Review and Create` and `Create`.
 
 Configuration that we created will not take effect until it is deployed. To deploy the configuration, follow these steps:
 
-Navigate to `vnm-westeurope-avnm-labs | Settings | Configurations`, select the `hub-spoke-config` Connectivity Configuration, `Norway East` as a `Target regions` and then click `Next`.
+Navigate to `vnm-westeurope-avnm-labs | Settings | Configurations`, open `hub-spoke-config` Connectivity configuration and click `Deploy`.
+
+![Deploy Connectivity Configuration](../../assets/images/lab-04/hub-spoke-deploy-1.png)
+
+Select `West Europe` as a `Target regions` and then click `Next`.
 
 ![Deploy Connectivity Configuration](../../assets/images/lab-04/deploy-connectivity-configuration-1.png)
 
@@ -67,27 +71,31 @@ If you check `vnet-spoke1-westeurope`, you should see a peering connection to `v
 
 ![VNet Peering](../../assets/images/lab-04/peering-1.png)
 
-Also if you check `Effective routes` for `vm-spoke1-westeurope-nic-01`, you should see the following new route to `vnet-hub-westeurope`.
+If you check `Effective routes` for `vm-spoke1-westeurope-nic-01`, you should see the following new route to `vnet-hub-westeurope`.
 
 ![Effective Routes](../../assets/images/lab-04/direct-communication-0.png)
 
 
 ## Task #5 - Test connectivity between VMs
 
-Connect to `vm-spoke1-westeurope` using `az cli` Bastion and ssh extensions. Use `iac-admin` `fooBar123!` username and password to login. From the terminal try to ping VMs from hub and spoke2. Note that IP assined to your VMs might be different, so check them before you run the commands.
+Connect to `vm-spoke1-westeurope` using `az cli` Bastion and ssh extensions. Use `iac-admin` `fooBar123!` as a username and password to login. 
 
 
 ```bash
 # Get vm-spoke1-westeurope resource id
 $vmId = (az vm show --name vm-spoke1-westeurope --resource-group rg-westeurope-avnm-labs --query id --output tsv)
 
+# SSH to vm-spoke1-westeurope via bastion host
 az network bastion ssh --name bastion-westeurope --resource-group rg-westeurope-avnm-labs --target-resource-id $vmId --auth-type password --username iac-admin
 ```
 
-From the terminal try to ping VMs from hub and spoke2. Note that IP assined to your VMs might be different, so, check them before you run the commands.
+From the terminal session, try to ping VMs from hub and spoke2. 
+
+> Note! IP assined to your VMs might be different, so check them before you run the commands.
+
 
 ```bash
-# ping VM at hub VNet (you may have different IP for your VM)
+# ping hub VM
 iac-admin@vm-spoke1-westeurope:~$ ping 10.9.0.132
 PING 10.9.0.132 (10.9.0.132) 56(84) bytes of data.
 64 bytes from 10.9.0.132: icmp_seq=1 ttl=64 time=3.05 ms
@@ -95,7 +103,7 @@ PING 10.9.0.132 (10.9.0.132) 56(84) bytes of data.
 64 bytes from 10.9.0.132: icmp_seq=3 ttl=64 time=1.31 ms
 ```
 
-You should get a response from the VM. Now, try to ping `vm-spoke2-westeurope` from `spoke2` VNet.
+You should get a response from hub VM. Now, try to ping `vm-spoke2-westeurope`.
 
 ```bash
 # ping VM at vnet-spoke2-westeurope VNet (you may have different IP for your VM)
@@ -107,7 +115,7 @@ You will not get any response, because there are no connectivity between spokes.
 
 ## Task #6 - Enable direct connectivity between VNets within Network Group 
 
-Open `hub-spoke-config` Connectivity Configuration and navigate to `Settings -> Network groups`. Select `ng-spokes` Network Group, click `... -> Enable direct connectivity`.
+Open `hub-spoke-config` Connectivity Configuration and navigate to `Settings -> Network groups`. Select `ng-spokes-westeurope` Network Group, click `... -> Enable direct connectivity`.
 
 ![Effective Routes](../../assets/images/lab-04/direct-communication-1.png)
 
@@ -115,9 +123,9 @@ When enabled, deploy configuration changes.
 
 ![Enable direct connectivity](../../assets/images/lab-04/deploy-1.png)
 
-Select `hub-spoke-config` configuration, `Norway East` as a deployment region and Deploy.
+Select `hub-spoke-config` configuration, `West Europe` as a deployment region and Deploy.
 
-![Enable direct connectivity](../../assets/images/lab-04/deploy-2.png)
+![Enable direct connectivity](../../assets/images/lab-04/deploy-connectivity-configuration-1.png)
 
 When deployment complete, check `Effective routes` for `vm-spoke1-westeurope-nic-01`.
 
