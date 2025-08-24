@@ -7,12 +7,11 @@ nav:
   - Prerequisites: prerequisites.md
   - Lab 01 - Provision lab resources: labs/lab-01/index.md
   - Lab 02 - Managing Virtual Networks IP addresses using AVNM IPAM: labs/lab-02/index.md
-  - Lab 03 - Segmenting virtual networks with Network Groups 
-  - Lab 04 - Implementing hub-and-spoke network topology with AVNM
-  - Lab 05 - Implementing mesh network topology with AVNM
-  - Lab 06 - Secure virtual networks using AVNM rule-set
-  - Lab 07 - Routing spoke-to-spoke traffic via Azure Firewall
-  - Lab-08 - Verifying connectivity between spokes
+  - Lab 03 - Segmenting virtual networks with Network Groups: labs/lab-03/index.md
+  - Lab 04 - Implementing hub-and-spoke network topology with AVNM: labs/lab-04/index.md
+  - Lab 05 - Secure virtual networks using AVNM rule-set: labs/lab-05/index.md
+  - Lab 06 - Routing spoke-to-spoke and spoke-to-internet traffic via Azure Firewall: labs/lab-06/index.md
+  - Lab-07 - Verifying connectivity between spokes
   - Lab 09 - Cleaning up resources: labs/lab-09/index.md
 theme:
   name: material

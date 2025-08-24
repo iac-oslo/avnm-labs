@@ -4,7 +4,7 @@
 ![Admin rules](https://learn.microsoft.com/en-us/azure/virtual-network-manager/media/concept-security-admins/traffic-evaluation.png)
 
 
-## Task #1 - Create new Security Configuration using `az cli`
+## Task #1 - Create new Security Configuration using `Bicep`
 
 In this task we will implement security rules to fullfil the following "business requirements":
 
@@ -17,12 +17,12 @@ This business requirement will be implemented using the following Admin Security
 - deny SSH and RDP to all VNets
 - allow SSH from hub VM (`10.9.0.132`) to spokes VMs
 - deny Internet access for all VNets
-- allow http and https to `ifconfig.me (34.160.111.145)`
+- allow http and https to `ifconfig.me (34.160.111.145)` from hub VM
 
 Before we implement these rules, let's check that:
 - it's possible to SSH (via Bastion) to `vm-hub-westeurope`
 - it's possible to SSH (via Bastion) to `vm-spoke1-westeurope`
-- you can `curl ifconfig.me` and `curl google.com` both from `vm-hub-westeurope` and `vm-spoke1-westeurope`
+- you can `curl ifconfig.me` and `curl google.com` from `vm-hub-westeurope` 
 
 First, let's SSH into the hub VM:
 ```powershell
@@ -284,7 +284,7 @@ ssh iac-admin@10.9.1.4
 ```
 
 You should be able to SSH into the spoke1 VM because `allow-ssh-from-hub` rule allows it. 
-Run `curl ifconfig.me` and `curl google.com` commands both from hub VM and spoke1 VM.
+Run `curl ifconfig.me` and `curl google.com` commands from hub VM.
 
 You should get response from `curl ifconfig.me` command because `allow-outbound-ifconfig-me` rule allows it, and `curl google.com` should fail because `deny-outbound-internet` rule blocks it.
 
@@ -372,7 +372,7 @@ Save and Deploy changes.
 
 Select `West Europe` as the target region and Deploy. 
 
-WHen deployed, get back to hub VM session and try to SSH to spoke 1 Vm again.
+WHen deployed, get back to hub VM session and try to SSH to spoke1 VM again.
 
 ```powershell
 # Get vm-hub-westeurope VM resource ID
@@ -382,3 +382,5 @@ az network bastion ssh --name bastion-westeurope --resource-group rg-westeurope-
 # From within hub VM session, try to SSH into the spoke1 VM.
 ssh iac-admin@10.9.1.4
 ```
+
+You should be able to SSH into `vm-spoke1-westeurope` successfully.
