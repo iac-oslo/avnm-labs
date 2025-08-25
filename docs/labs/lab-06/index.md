@@ -159,7 +159,7 @@ exit
 
 Ping is not responding, because now traffic between spoke VMs is being routed through the Azure Firewall. By default, the Azure Firewall denies all traffic that is not explicitly allowed. Let's check Azure Firewall logs. 
 
-Initial IaC deployment script configured that all Azure Firewall Diagnostic logs are sent to `law-westeurope-avnm-labs` Log Analytics workspace (LAW) and it's configured to use Resource specific LAW tables. Let's check Network rules logs. 
+Initial IaC deployment script configured that all Azure Firewall Diagnostic logs are sent to Resource specific tables of `law-westeurope-avnm-labs` Log Analytics workspace (LAW). Let's check Network rules logs. 
 
 Navigate to `Azure Portal > Log Analytics workspaces > law-westeurope-avnm-labs > Logs` and run the following query. Make sure that you are in `KQL mode`
 
@@ -173,11 +173,12 @@ AZFWNetworkRule
 
 ![Network rules Deny logs](../../assets/images/lab-06/network-logs-1.png)
 
-The query above queries data from `AZFWNetworkRule`. It retrieves the deny requests initiated from `spoke1` VNet IP range (where ipv4_is_in_range(SourceIp, '10.9.1.0/24')) for the last 20 min, then it groups result by SourceIp, DestinationIp, Protocol, and DestinationPort.
+The query above queries data from `AZFWNetworkRule` table. It retrieves all deny requests initiated from `spoke1` VNet IP range (where ipv4_is_in_range(SourceIp, '10.9.1.0/24')) for the last 20 min, then it groups the results by SourceIp, DestinationIp, Protocol, and DestinationPort.
 
-It shows that `ICMP` (aka ping) are blocked from `10.9.1.4` to `10.9.2.4`.
+It shows that all `ICMP` requests (aka ping) are blocked from `10.9.1.4` (spoke1 VM) to `10.9.2.4` (spoke2 VM).
 
-To fix the issue, we need to create a network rule to allow `ICMP` traffic between the spoke VNets.
+To fix the issue, we need to create new Firewall Network rule to allow `ICMP` traffic between spoke VNets.
+
 
 You need to create application rules to allow traffic between the spoke VMs.
 
