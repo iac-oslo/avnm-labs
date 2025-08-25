@@ -9,6 +9,8 @@ az provider register --namespace Microsoft.Network
 az provider register --namespace Microsoft.OperationalInsights
 az provider register --namespace Microsoft.Storage
 az provider register --namespace Microsoft.Compute
+az feature register --namespace Microsoft.Compute --name EncryptionAtHost
+az provider register -n Microsoft.Compute
 ```
 
 Install required `az cli` extensions

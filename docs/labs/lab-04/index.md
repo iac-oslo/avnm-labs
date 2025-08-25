@@ -1,9 +1,6 @@
 # lab-04 - Implementing hub-and-spoke network topology with AVNM
 
-Before you start configuring connectivity, security and routing across your networks, you first need to group virtual networks into Network Groups.
-
-A network group is global container that includes a set of virtual network resources from any region. Group membership is a many-to-many relationship, such that one group holds many virtual networks and any given virtual network can participate in multiple network groups. There are two types of memberships: static and dynamic memberships.
-
+In this lab, we will implement a `Hub and Spoke` network topology using Azure Virtual Network Manager (AVNM). We will create a connectivity configuration that will establish connectivity between the hub and spoke virtual networks. We will also enable direct connectivity between spokes using AVNM `Direct connectivity` feature.
 
 ## Task #1 - create new `Hub and spoke` Connectivity configuration using Portal
 
