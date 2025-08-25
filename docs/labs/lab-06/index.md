@@ -177,49 +177,203 @@ The query above queries data from `AZFWNetworkRule` table. It retrieves all deny
 
 It shows that all `ICMP` requests (aka ping) are blocked from `10.9.1.4` (spoke1 VM) to `10.9.2.4` (spoke2 VM).
 
-To fix the issue, we need to create new Firewall Network rule to allow `ICMP` traffic between spoke VNets.
+## Task #2 - Create Network Firewall Rule to allow ping between spokes
 
-Create new `allow-ping-between-spokes.bicep` file with the following content:
+To fix the issue, we need to create new Firewall Network rule to allow `ICMP` traffic between `10.9.1.0/24` and `10.9.2.0/24` spoke VNets.
+
+Create new `firewall-rules.bicep` file with the following content:
 
 ```bicep
+param spoke1IPRange string = '10.9.1.0/24'
+param spoke2IPRange string = '10.9.2.0/24'
+
+
+resource firewallPolicies 'Microsoft.Network/firewallPolicies@2024-07-01' existing = {
+  name: 'nfp-westeurope'
+}
+
+resource spokesRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleCollectionGroups@2023-05-01' = {
+  parent: firewallPolicies
+  name: 'SpokesFirewallRuleCollectionGroup'
+  properties: {
+    priority: 200
+    ruleCollections: [
+      {
+        name: 'spokes-net-rc01'
+        ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+        priority: 100
+        action: {
+          type: 'Allow'
+        }
+        rules: [
+        {
+            name: 'allow-ping-between-spokes'
+            ruleType: 'NetworkRule'
+            description: 'Allow ICMP between spoke VNets'
+            sourceAddresses: [
+              spoke1IPRange
+              spoke2IPRange
+            ]
+            ipProtocols: [
+              'ICMP'
+            ]
+            destinationPorts: [
+              '*'
+            ]
+            destinationAddresses: [
+              spoke1IPRange
+              spoke2IPRange
+            ]
+          }          
+        ]
+      }                
+    ]
+  }
+}
+
 ```
 
-Deploy the `allow-ping-between-spokes.bicep` file.
+Deploy the `firewall-rules.bicep` file.
 
 ```powershell
-# Make sure that you are at the folder where allow-ping-between-spokes.bicep file is located
+# Make sure that you are at the folder where firewall-rules.bicep file is located
 pwd
 
-# Deploy allow-ping-between-spokes.bicep file
-az deployment group create --resource-group rg-westeurope-avnm-labs --template-file allow-ping-between-spokes.bicep
+# Deploy firewall-rules.bicep file
+az deployment group create --resource-group rg-westeurope-avnm-labs --template-file firewall-rules.bicep
 ```
 
-You need to create application rules to allow traffic between the spoke VMs.
+When deployed, get back to your SSH session and try to ping `10.9.2.4` from spoke1 VM. TThis time, ping should succeed.
+
+```bash
+iac-admin@vm-spoke1-westeurope:~$ ping 10.9.2.4
+PING 10.9.2.4 (10.9.2.4) 56(84) bytes of data.
+64 bytes from 10.9.2.4: icmp_seq=86 ttl=63 time=4.52 ms
+64 bytes from 10.9.2.4: icmp_seq=87 ttl=63 time=2.13 ms
+64 bytes from 10.9.2.4: icmp_seq=88 ttl=63 time=2.48 ms
+64 bytes from 10.9.2.4: icmp_seq=89 ttl=63 time=2.35 ms
+```
+
+## Task #3 - Create Application Firewall Rule to allow outbound traffic to ifconfig.me
+One of the routes we configured was to send all outbound Internet traffic (`0.0.0.0/0`) via Azure firewall. 
+
+Let's verify that. From spoke1 VM, try to run `curl ifconfig.me` command. 
+
+```bash
+iac-admin@vm-spoke1-westeurope:~$ curl ifconfig.me
+Action: Deny. Reason: No rule matched. Proceeding with default action.
+```
+
+As you can see, it's blocked by the firewall. This is also confirmed by the logs. 
+
+Navigate to `Azure Portal > Log Analytics workspaces > law-westeurope-avnm-labs > Logs` and run the following query. Make sure that you are in `KQL mode`
 
 ```kql
 AZFWApplicationRule
 | where TimeGenerated > ago(20min)
-| where Action == 'Deny'
-| where ipv4_is_in_range(SourceIp, '10.9.1.0/24')
-| summarize count() by SourceIp, Fqdn
-
-AZFWApplicationRule
-| where TimeGenerated > ago(20min)
 | where Action == 'Allow'
 | where ipv4_is_in_range(SourceIp, '10.9.1.0/24')
 | summarize count() by SourceIp, Fqdn
+```
 
-AZFWNetworkRule
-| where TimeGenerated > ago(20min)
-| where Action == 'Deny'
-| where ipv4_is_in_range(SourceIp, '10.9.1.0/24')
-| summarize count() by SourceIp, DestinationIp, Protocol, DestinationPort
+![Network rules Deny logs](../../assets/images/lab-06/app-logs-1.png)
 
 
-AZFWNetworkRule
-| where TimeGenerated > ago(20min)
-| where Action == 'Allow'
-| where ipv4_is_in_range(SourceIp, '10.9.1.0/24')
-| summarize count() by SourceIp, DestinationIp, Protocol, DestinationPort
+To solve this issue, we need to implement Firewall Application rule to allow `HTTP` and `HTTPS` traffic from spoke VNets to `ifconfig.me`. 
+
+Update `firewall-rules.bicep` file with new Application rule:
+
+```bicep
+param spoke1IPRange string = '10.9.1.0/24'
+param spoke2IPRange string = '10.9.2.0/24'
+
+
+resource firewallPolicies 'Microsoft.Network/firewallPolicies@2024-07-01' existing = {
+  name: 'nfp-westeurope'
+}
+
+resource spokesRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleCollectionGroups@2023-05-01' = {
+  parent: firewallPolicies
+  name: 'SpokesFirewallRuleCollectionGroup'
+  properties: {
+    priority: 200
+    ruleCollections: [
+      {
+        name: 'spokes-net-rc01'
+        ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+        priority: 100
+        action: {
+          type: 'Allow'
+        }
+        rules: [
+        {
+            name: 'allow-ping-between-spokes'
+            ruleType: 'NetworkRule'
+            description: 'Allow ICMP between spoke VNets'
+            sourceAddresses: [
+              spoke1IPRange
+              spoke2IPRange
+            ]
+            ipProtocols: [
+              'ICMP'
+            ]
+            destinationPorts: [
+              '*'
+            ]
+            destinationAddresses: [
+              spoke1IPRange
+              spoke2IPRange
+            ]
+          }          
+        ]
+      }      
+      {
+        name: 'spokes-app-rc01'
+        ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+        priority: 200
+        action: {
+          type: 'Allow'
+        }
+        rules: [
+          {
+            name: 'allow-outbound-to-ifconfig-me'
+            ruleType: 'ApplicationRule'
+            description: 'Allow HTTP/HTTPS to ifconfig.me'
+            sourceAddresses: [
+              spoke1IPRange
+              spoke2IPRange
+            ]
+            protocols: [
+              {
+                port: 80
+                protocolType: 'Http'
+              }
+              {
+                port: 443
+                protocolType: 'Https'
+              }
+            ]
+            fqdnTags: [
+              'ifconfig.me'
+            ]
+          }
+        ]
+      }      
+    ]
+  }
+}
 
 ```
+
+Deploy `firewall-rules.bicep` Bicep file:
+
+```powershell
+# Make sure that you are at the folder where firewall-rules.bicep file is located
+pwd
+
+# Deploy firewall-rules.bicep file
+az deployment group create --resource-group rg-westeurope-avnm-labs --template-file firewall-rules.bicep
+```
+
+When deployed, get back to your SSH session and try to run `curl ifconfig.me` command from spoke1 VM. This time it should succeed.
+
