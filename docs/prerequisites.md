@@ -76,6 +76,9 @@ az extension add -n bastion
 
 # install ssh extension
 az extension add -n ssh
+
+# install azure-firewall extension
+az extension add -n azure-firewall
 ```
 
 ## Install git

@@ -131,11 +131,11 @@ pwd
 az deployment group create --resource-group rg-westeurope-avnm-labs --template-file routing-configuration.bicep
 ```
 
-When provisioned, deploy it from Azure Virtual Network Manager, the same was as we deployed connectivity and security configurations.
+When provisioned, deploy it from Azure Virtual Network Manager, the same way we deployed Connectivity and Security configurations.
 
 ![Deploy Security Configuration](../../assets/images/lab-06/deploy-1.png). 
 
-WWhen deployed, try to ping `spoke2` VM from `spoke1` VM.
+When deployed, try to ping `spoke2` VM from `spoke1` VM.
 
 ```powershell
 # Get vm-hub-westeurope VM resource ID
@@ -271,7 +271,7 @@ Navigate to `Azure Portal > Log Analytics workspaces > law-westeurope-avnm-labs 
 ```kql
 AZFWApplicationRule
 | where TimeGenerated > ago(20min)
-| where Action == 'Allow'
+| where Action == 'Deny'
 | where ipv4_is_in_range(SourceIp, '10.9.1.0/24')
 | summarize count() by SourceIp, Fqdn
 ```
@@ -353,7 +353,7 @@ resource spokesRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleColle
                 protocolType: 'Https'
               }
             ]
-            fqdnTags: [
+            targetFqdns: [
               'ifconfig.me'
             ]
           }
