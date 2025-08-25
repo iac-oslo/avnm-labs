@@ -65,7 +65,7 @@ az account set --subscription subscription_name
 az account set --subscription subscription_name
 ```
 
-## Install requires `az cli` extensions
+## Install required `az cli` extensions
 
 ```powershell
 # Install virtual-network-manager extension
