@@ -179,6 +179,20 @@ It shows that all `ICMP` requests (aka ping) are blocked from `10.9.1.4` (spoke1
 
 To fix the issue, we need to create new Firewall Network rule to allow `ICMP` traffic between spoke VNets.
 
+Create new `allow-ping-between-spokes.bicep` file with the following content:
+
+```bicep
+```
+
+Deploy the `allow-ping-between-spokes.bicep` file.
+
+```powershell
+# Make sure that you are at the folder where allow-ping-between-spokes.bicep file is located
+pwd
+
+# Deploy allow-ping-between-spokes.bicep file
+az deployment group create --resource-group rg-westeurope-avnm-labs --template-file allow-ping-between-spokes.bicep
+```
 
 You need to create application rules to allow traffic between the spoke VMs.
 
