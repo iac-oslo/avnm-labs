@@ -31,7 +31,7 @@ module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
     location: parLocation
     subnets: [
       {
-        addressPrefix: parAddressRange
+        addressPrefixes: [parAddressRange]
         name: 'subnet-workload'
       }
     ]
