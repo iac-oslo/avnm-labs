@@ -76,6 +76,7 @@ The following IP ranges are used for virtual networks:
 
 
 `vnet-hub-westeurope` contains four subnets:
+
 | Subnet Name | IP Range |
 |-------------|----------|
 | AzureFirewallSubnet    | 10.9.0.0/26 |
@@ -109,6 +110,7 @@ az vm show -d -g rg-westeurope-avnm-labs -n vm-spoke1-westeurope --query private
 az vm show -d -g rg-westeurope-avnm-labs -n vm-spoke2-westeurope --query privateIps -o tsv
 
 ```
+
 | Virtual Machine | IP Address |
 |------------------|------------|
 | vm-hub-westeurope | 10.9.0.132  |
