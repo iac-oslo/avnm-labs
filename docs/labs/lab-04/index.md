@@ -73,7 +73,7 @@ If you check `Effective routes` for `vm-spoke1-westeurope-nic-01`, you should se
 ![Effective Routes](../../assets/images/lab-04/direct-communication-0.png)
 
 
-## Task #3 - Test connectivity between VMs
+## Task #5 - Test connectivity between VMs
 
 Connect to `vm-spoke1-westeurope` using `az cli` Bastion and ssh extensions. Use `iac-admin` `fooBar123!` as a username and password to login. 
 
@@ -110,7 +110,7 @@ PING 10.9.2.4 (10.9.2.4) 56(84) bytes of data.
 
 You will not get any response, because there are no connectivity between spokes. Let's enable direct connectivity between spokes using Virtual Network Manager `Direct connectivity` feature.
 
-## Task #4 - Enable direct connectivity between VNets within Network Group
+## Task #6 - Enable direct connectivity between VNets within Network Group 
 
 Open `hub-spoke-config` Connectivity Configuration and navigate to `Settings -> Network groups`. Select `ng-spokes-westeurope` Network Group, click `... -> Enable direct connectivity`.
 
