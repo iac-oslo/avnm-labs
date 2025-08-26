@@ -9,7 +9,6 @@ This is level 100 workshop that covers different aspects of working with Azure V
 - How to implement hub-and-spoke and mesh network topology with AVNM
 - How to secure your virtual networks using AVNM rule-set
 - How to route spoke-to-spoke traffic via Azure Firewall
-- How to verify connectivity between spokes
 
 and much more...
 
@@ -25,8 +24,7 @@ Workshop is organized as a combination of theoretical blocks with slides and han
 - [Lab-04](labs/lab-04/index.md) - Implementing hub-and-spoke network topology with AVNM
 - [Lab-05](labs/lab-05/index.md) - Secure virtual networks using AVNM rule-set
 - [Lab-06](labs/lab-06/index.md) - Routing spoke-to-spoke and spoke-to-internet traffic via Azure Firewall
-- Lab-07 - Verifying connectivity between spokes
-- [Lab-09](labs/lab-09/index.md) - Cleaning up resources
+- [Lab-07](labs/lab-07/index.md) - Cleaning up resources
 
 ## Prerequisites
 

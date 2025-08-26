@@ -11,8 +11,7 @@ nav:
   - Lab 04 - Implementing hub-and-spoke network topology with AVNM: labs/lab-04/index.md
   - Lab 05 - Secure virtual networks using AVNM rule-set: labs/lab-05/index.md
   - Lab 06 - Routing spoke-to-spoke and spoke-to-internet traffic via Azure Firewall: labs/lab-06/index.md
-  - Lab-07 - Verifying connectivity between spokes
-  - Lab 09 - Cleaning up resources: labs/lab-09/index.md
+  - Lab 07 - Cleaning up resources: labs/lab-07/index.md
 theme:
   name: material
   font:
