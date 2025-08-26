@@ -288,7 +288,7 @@ Run `curl ifconfig.me` and `curl google.com` commands from hub VM.
 
 You should get response from `curl ifconfig.me` command because `allow-outbound-ifconfig-me` rule allows it, and `curl google.com` should fail because `deny-outbound-internet` rule blocks it.
 
-## Task - Implement Always allow rule
+## Task #2 - Implement Always allow rule
 
 When you define Admin security rule, there is one special type of action called `Always allow`. Official documentation describes it as follows:
 
