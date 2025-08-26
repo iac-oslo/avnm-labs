@@ -111,8 +111,9 @@ az vm show -d -g rg-westeurope-avnm-labs -n vm-spoke2-westeurope --query private
 
 ```
 
-| Virtual Machine | IP Address |
-|------------------|------------|
-| vm-hub-westeurope | 10.9.0.132  |
-| vm-spoke1-westeurope | 10.9.1.4  |
-| vm-spoke2-westeurope | 10.9.2.4  |
+| VM | IP Range |
+|------------------|----------|
+| vm-hub-westeurope | 10.9.0.132 |
+| vm-spoke1-westeurope | 10.9.1.4 |
+| vm-spoke2-westeurope | 10.9.2.4 |
+
