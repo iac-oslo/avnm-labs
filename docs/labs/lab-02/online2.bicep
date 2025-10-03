@@ -46,7 +46,7 @@ module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
             pool: {
               id: ipamPool.id
             }
-            numberOfIpAddresses: '70'
+            numberOfIpAddresses: '80'
           }
         ]
       }
