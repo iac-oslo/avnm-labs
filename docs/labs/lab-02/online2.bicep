@@ -13,7 +13,7 @@ module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
     addressPrefixes: [
       ipamPool.id
     ]
-    ipamPoolNumberOfIpAddresses: '100'
+    ipamPoolNumberOfIpAddresses: '200'
     name: varVNetName
     location: parLocation
     subnets: [
@@ -39,6 +39,18 @@ module modVNet 'br/public:avm/res/network/virtual-network:0.7.0' = {
           }
         ]
       }
+      {
+        name: 'subnet-workload-3'
+        ipamPoolPrefixAllocations: [
+          {
+            pool: {
+              id: ipamPool.id
+            }
+            numberOfIpAddresses: '70'
+          }
+        ]
+      }
+
     ]
     enableTelemetry: false
   }
